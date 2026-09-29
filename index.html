@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bitewise : Swipe (And Eat) Right</title>
+        <meta name="description" content="A small school project about a recipe-matching app that suits your taste and the algorithm's!">
+        <link rel="icon" href="square-image.jpg" type="image/jpeg">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="app" id="app">
+
+        <!-- ===== WELCOME ===== -->
+            <section id="welcome" class="screen active">
+                <div class="brand">
+                    <img src="square-image.jpg" alt="">
+                    <span class="wordmark" style="margin-top: 3rem;">Bitewise</span>
+                </div>
+                <div class="welcome-copy">
+                    <span class="pill">Matching 20,000+ recipes</span>
+                    <h1>Swipe and eat right.</h1>
+                    <p style="color:var(--ink)">Stop scrolling for hours just to eat plain chicken breast. Bitewise pairs you with the perfect meal. Just swipe and eat right once you've met your match.</p>
+                    <button class="prim-button on-dark btn-block" onclick="StartAPP()">Start matching</button>
+                </div>
+            </section>
+
+        <!-- ===== ONBOARDING ===== -->
+            <section id="guest-form" class="screen">
+                <div class="brand">
+                    <img src="square-image.jpg" alt="">
+                    <span class="wordmark">Bitewise</span>
+                </div>
+                <div class="form-head">
+                    <p class="page-sub">A few quick questions so we only show recipes that suit you.</p>
+                </div>
+
+                <form id="form" onsubmit="return false">
+                    <div class="field">
+                        <label for="name">What's your name?</label>
+                        <input type="text" id="name" name="userName" class="control" autocomplete="given-name">
+                    </div>
+                    <div class="field">
+                        <label for="goal">What describes you best?</label>
+                        <select class="control" id="goal" required>
+                            <option>Weight Gain</option>
+                            <option>Weight Loss</option>
+                            <option>High Protein</option>
+                            <option>Quick and Easy</option>
+                            <option>Discover Food</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <span class="field-label" id="allergy-label">Any allergies?</span>
+                        <p class="hint">We'll skip recipes that contain them.</p>
+                        <div class="field-row">
+                            <select class="control" id="allergy1" aria-labelledby="allergy-label" required>
+                                <option>None</option>
+                                <option>Seafood</option>
+                                <option>Soy</option>
+                                <option>Dairy</option>
+                                <option>Gluten</option>
+                                <option>Nuts</option>
+                                <option>Eggs</option>
+                            </select>
+                            <select class="control" id="allergy2" aria-labelledby="allergy-label" required>
+                                <option>None</option>
+                                <option>Seafood</option>
+                                <option>Soy</option>
+                                <option>Dairy</option>
+                                <option>Gluten</option>
+                                <option>Nuts</option>
+                                <option>Eggs</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="diet">Any dietary restrictions?</label>
+                        <select class="control" id="diet" required>
+                            <option>None</option>
+                            <option>Vegan</option>
+                            <option>Vegetarian</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="age">What's your age range?</label>
+                        <select class="control" id="age" required>
+                            <option>17-20</option>
+                            <option>21-25</option>
+                            <option>26-30</option>
+                            <option>31-35+</option>
+                        </select>
+                    </div>
+                    <button type="button" class="prim-button btn-block" onclick="onboardingFinish()">Start swiping</button>
+                </form>
+            </section>
+
+        <!-- ===== HOMEPAGE ===== -->
+            <section id="homepage" class="screen">
+                <div class="topbar">
+                    <div class="brand">
+                        <img src="square-image.jpg" alt="">
+                        <span class="wordmark">Bitewise</span>
+                    </div>
+                    <p class="greeting" id="greeting">Hi there</p>
+                </div>
+
+                <div class="food-area">
+                    <div id="foodCard" class="food-card">
+                        <div class="food-media">
+                            <img id="foodImage" class="food-image" src="" alt="">
+                            <span class="stamp stamp-yum" id="stampYum">Yum</span>
+                            <span class="stamp stamp-pass" id="stampPass">Pass</span>
+                            <div class="food-caption">
+                                <h2 id="foodName" class="food-name"></h2>
+                                <span id="foodCalories" class="calories"></span>
+                            </div>
+                        </div>
+                        <div class="food-info">
+                            <div id="foodTags" class="tags"></div>
+                            <button class="secondary-btn" onclick="showDetails()">View recipe</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bw-actions">
+                    <button class="material-icons bw-action-btn reject" aria-label="Pass on this recipe" onclick="programmaticSwipe(-1)">clear</button>
+                    <button class="material-icons bw-action-btn accept" aria-label="Save this recipe" onclick="programmaticSwipe(1)">favorite</button>
+                </div>
+            </section>
+
+        <!-- ===== DETAILS ===== -->
+            <section id="details" class="screen">
+                <div class="detail-hero">
+                    <img id="detailImage" class="detail-image" src="" alt="">
+                    <button class="icon-btn back-btn" onclick="closeDetails()" aria-label="Back">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                </div>
+
+                <div class="detail-head">
+                    <h2 id="detailName" class="detail-title"></h2>
+                    <div class="detail-chips">
+                        <span id="detailCalories" class="calories"></span>
+                        <span class="chip"><span class="material-icons">group</span>Serves <span id="detailServes"></span></span>
+                        <span class="chip"><span class="material-icons">schedule</span><span id="detailCookingtime"></span></span>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Nutrition</h3>
+                <div id="nutrition"></div>
+                <h3 class="section-title">Ingredients</h3>
+                <div id="ingredients"></div>
+                <h3 class="section-title">Steps</h3>
+                <div id="steps"></div>
+            </section>
+
+        <!-- ===== SEARCH ===== -->
+            <section id="search-page" class="screen">
+                <div class="page-head">
+                    <h2 class="page-title">Search</h2>
+                    <p class="page-sub">Find a recipe by name or tag.</p>
+                </div>
+                <div class="search-bar">
+                    <span class="material-icons">search</span>
+                    <input type="text" id="searchInput" placeholder="Try &quot;quick&quot; or &quot;vegan&quot;" aria-label="Search recipes" oninput="renderSearchResults()">
+                </div>
+                <div id="searchResultsList" class="saved-list"></div>
+            </section>
+
+        <!-- ===== MATCHES ===== -->
+            <section id="recipes" class="screen">
+                <div class="page-head">
+                    <h2 class="page-title">Your matches</h2>
+                    <p class="page-sub">Recipes you swiped right on.</p>
+                </div>
+                <div id="savedRecipesList" class="saved-list"></div>
+            </section>
+
+        <!-- ===== BITEWISE+ ===== -->
+            <section id="subscription" class="screen">
+                <div class="page-head">
+                    <h2 class="page-title">Go further</h2>
+                    <p class="page-sub">Pick a plan that fits your kitchen.</p>
+                </div>
+
+                <div class="plus-card">
+                    <h3 class="plus-title">Bitewise+</h3>
+                    <p>Go beyond the basics with unlimited recipes, tailored meal plans, and an ad-free kitchen.</p>
+                    <div class="premium-list"><span class="material-icons">security</span>No ads</div>
+                    <div class="premium-list"><span class="material-icons">local_cafe</span>Bitewise Blends</div>
+                    <div class="premium-list"><span class="material-icons">auto_fix_high</span>Personalized meal plans</div>
+                    <div class="premium-list"><span class="material-icons">kitchen</span>myFridge</div>
+                </div>
+
+                <div class="plan-grid">
+                    <button type="button" class="plans selected" onclick="planSelected(this)">
+                        <span class="plan-name">Monthly</span>
+                        <span class="plan-price">Rp49,900</span>
+                        <span class="plan-period">/mo</span>
+                    </button>
+                    <button type="button" class="plans" id="yearly-plan" onclick="planSelected(this)">
+                        <span class="badge">Most popular</span>
+                        <span class="plan-name">Yearly</span>
+                        <span class="plan-price">Rp499,900</span>
+                        <span class="plan-period">/yr</span>
+                    </button>
+                </div>
+                <button class="prim-button btn-block">Upgrade now</button>
+            </section>
+
+        <!-- ===== TEAM ===== -->
+            <section id="credits" class="screen">
+                <div class="page-head">
+                    <h2 class="page-title">Our team</h2>
+                    <p class="page-sub">The people behind Bitewise.</p>
+                </div>
+                <ul class="team-list">
+                    <li class="member"><div><div class="member-name">Angelyn</div><div class="member-role">Coder</div></div></li>
+                    <li class="member"><div><div class="member-name">Chevelle</div><div class="member-role">Business Team</div></div></li>
+                    <li class="member"><div><div class="member-name">Elaine</div><div class="member-role">Design</div></div></li>
+                    <li class="member"><div><div class="member-name">Angela</div><div class="member-role">Economics Team</div></div></li>
+                </ul>
+                <div class="event">
+                    <img src="square-image.jpg" alt="">
+                    <div>
+                        <p class="event-label">This project will be on</p>
+                        <h3>Universal School Jakarta's STEAM Expo</h3>
+                        <p class="event-note">3 October &middot; Brought to you by the Bitewise team!</p>
+                    </div>
+                </div>
+            </section>
+
+        <!-- ===== NAV (shared) ===== -->
+            <nav class="nav" aria-label="Main">
+                <button class="nav-item" data-screen="homepage"><span class="material-icons">home</span>Home</button>
+                <button class="nav-item" data-screen="search-page"><span class="material-icons">search</span>Search</button>
+                <button class="nav-item" data-screen="recipes"><span class="material-icons">favorite</span>Matches</button>
+                <button class="nav-item" data-screen="subscription"><span class="material-icons">diamond</span>Plus</button>
+                <button class="nav-item" data-screen="credits"><span class="material-icons">groups_3</span>Team</button>
+            </nav>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
