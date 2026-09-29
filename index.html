@@ -212,35 +212,51 @@
                 <button class="prim-button btn-block">Upgrade now</button>
             </section>
 
-        <!-- ===== TEAM ===== -->
-            <section id="credits" class="screen">
+        <!-- ===== MYFRIDGE ===== -->
+            <section id="myfridge" class="screen">
                 <div class="page-head">
-                    <h2 class="page-title">Our team</h2>
-                    <p class="page-sub">The people behind Bitewise.</p>
+                    <h2 class="page-title">myFridge</h2>
+                    <p class="page-sub">Add what you have and we'll find recipes you can cook.</p>
+                    <span class="pill fridge-uses" id="fridgeUses">1 free use left</span>
                 </div>
-                <ul class="team-list">
-                    <li class="member"><div><div class="member-name">Angelyn</div><div class="member-role">Coder</div></div></li>
-                    <li class="member"><div><div class="member-name">Chevelle</div><div class="member-role">Business Team</div></div></li>
-                    <li class="member"><div><div class="member-name">Elaine</div><div class="member-role">Design</div></div></li>
-                    <li class="member"><div><div class="member-name">Angela</div><div class="member-role">Economics Team</div></div></li>
-                </ul>
-                <div class="event">
-                    <img src="square-image.jpg" alt="">
+
+                <div class="search-bar fridge-add">
+                    <span class="material-icons">kitchen</span>
+                    <input type="text" id="fridgeInput" placeholder="Add an ingredient" aria-label="Add an ingredient" maxlength="40" autocomplete="off" onkeydown="if (event.key === 'Enter') addFridgeItem()">
+                    <button type="button" class="fridge-add-btn" onclick="addFridgeItem()" aria-label="Add ingredient"><span class="material-icons">add</span></button>
+                </div>
+
+                <p class="fridge-label">Quick add</p>
+                <div id="fridgeSuggestions" class="tags"></div>
+
+                <div class="fridge-head">
+                    <h3 class="section-title">In your fridge</h3>
+                    <button type="button" class="text-btn" id="fridgeClear" onclick="clearFridge()">Clear all</button>
+                </div>
+                <div id="fridgeItems" class="tags"></div>
+
+                <button type="button" class="prim-button btn-block fridge-find" id="fridgeFind" onclick="findFridgeRecipes()">Find recipes</button>
+
+                <div class="fridge-lock" id="fridgeLock" hidden>
+                    <span class="material-icons">lock</span>
                     <div>
-                        <p class="event-label">This project will be on</p>
-                        <h3>Universal School Jakarta's STEAM Expo</h3>
-                        <p class="event-note">3 October &middot; Brought to you by the Bitewise team!</p>
+                        <h4>You've used your free myFridge search</h4>
+                        <p>Upgrade to Bitewise+ for unlimited myFridge searches.</p>
                     </div>
+                    <button type="button" class="secondary-btn" onclick="showScreen('subscription')">See Bitewise+</button>
                 </div>
+
+                <h3 class="section-title">You can make</h3>
+                <div id="fridgeResults" class="saved-list" aria-live="polite"></div>
             </section>
 
-        <!-- ===== NAV (shared) ===== -->
+        <!-- ===== NAV===== -->
             <nav class="nav" aria-label="Main">
                 <button class="nav-item" data-screen="homepage"><span class="material-icons">home</span>Home</button>
                 <button class="nav-item" data-screen="search-page"><span class="material-icons">search</span>Search</button>
                 <button class="nav-item" data-screen="recipes"><span class="material-icons">favorite</span>Matches</button>
                 <button class="nav-item" data-screen="subscription"><span class="material-icons">diamond</span>Plus</button>
-                <button class="nav-item" data-screen="credits"><span class="material-icons">groups_3</span>Team</button>
+                <button class="nav-item" data-screen="myfridge"><span class="material-icons">kitchen</span>myFridge</button>
             </nav>
         </div>
 
