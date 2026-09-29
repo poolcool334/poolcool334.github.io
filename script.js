@@ -42,7 +42,6 @@
             });
         }
 
-            /* strength: -1 (pass) .. 0 .. 1 (yum) */
             function setStamps(strength) {
                 const clamp = v => Math.max(0, Math.min(1, v));
                 document.getElementById('stampYum').style.opacity = clamp(strength);
@@ -158,6 +157,194 @@
                 const food = foods[index];
                 if (!food) return;
                 showDetails(food);
+            }
+
+            /*==============
+                MYFRIDGE
+            ================*/
+            let fridgeItems = [];
+            let fridgeUsed = false;
+            let fridgeMatches = [];
+
+            const FRIDGE_SUGGESTIONS = ["Chicken", "Eggs", "Tomato", "Onion", "Garlic", "Broccoli", "Pasta", "Cheese", "Mushroom", "Tofu", "Avocado", "Milk"];
+            const FRIDGE_IGNORE = new Set(["g", "kg", "ml", "tsp", "tbsp", "tablespoon", "teaspoon", "cup", "pound", "oz", "ounce", "pinch", "tin", "package", "of", "and", "or", "the", "optional"]);
+            const FRIDGE_STAPLES = new Set(["salt", "pepper", "black", "water", "oil", "olive", "vegetable"]);
+            const FRIDGE_ALIASES = {
+                pasta: ["penne", "fettucine", "fettuccine", "macaroni", "spaghetti", "noodle"],
+                cheese: ["parmesan", "cheddar", "gruyere", "parmigiano", "reggiano", "mozzarella"],
+                wrap: ["tortilla"]
+            };
+
+            function esc(text){
+                return String(text).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+            }
+
+            function stemWord(word){
+                if (word.length <= 3) return word;
+                if (word.endsWith("ies")) return word.slice(0, -3) + "y";
+                if (word.endsWith("oes")) return word.slice(0, -2);
+                if (word.endsWith("ss")) return word;
+                if (word.endsWith("s")) return word.slice(0, -1);
+                return word;
+            }
+
+            function tokenize(text){
+                return text
+                    .toLowerCase()
+                    .replace(/[\u200b-\u200d\ufeff]/g, "")
+                    .replace(/\(.*?\)/g, " ")
+                    .split(/[^a-z]+/)
+                    .filter(word => word.length > 1)
+                    .map(stemWord)
+                    .filter(word => !FRIDGE_IGNORE.has(word));
+            }
+
+            function isStaple(ingredient){
+                const words = tokenize(ingredient.split(",")[0]);
+                return words.length > 0 && words.every(word => FRIDGE_STAPLES.has(word));
+            }
+
+            function ingredientMatches(itemWords, ingredientWords){
+                if (itemWords.length === 0) return false;
+                return itemWords.every(word =>
+                    ingredientWords.includes(word) ||
+                    (FRIDGE_ALIASES[word] || []).some(alias => ingredientWords.includes(alias))
+                );
+            }
+            function prettyIngredient(ingredient){
+                const cleaned = ingredient
+                    .replace(/[\u200b-\u200d\ufeff]/g, "")
+                    .replace(/\(.*?\)/g, "")
+                    .replace(/^(?:[\d\s\/.\-\u2013\u00bd\u00bc\u00be\u2153\u2154\u215b]+|(?:g|kg|ml|l|tsp|tbsp|tablespoons?|teaspoons?|cups?|pounds?|oz|ounces?|pinch|tin|packages?|of)\b\s*)+/i, "")
+                    .split(",")[0]
+                    .trim();
+                return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : ingredient;
+            }
+
+            function computeFridgeMatches(){
+                const itemWordLists = fridgeItems.map(tokenize);
+                return filteredFoods
+                    .map(food => {
+                        const needed = food.ingredients.filter(ing => !isStaple(ing));
+                        const have = [];
+                        const missing = [];
+                        needed.forEach(ing => {
+                            const ingWords = tokenize(ing);
+                            const found = itemWordLists.some(itemWords => ingredientMatches(itemWords, ingWords));
+                            (found ? have : missing).push(ing);
+                        });
+                        return { food, have, missing, total: needed.length };
+                    })
+                    .filter(result => result.total > 0 && result.have.length > 0)
+                    .sort((a, b) =>
+                        (b.have.length / b.total) - (a.have.length / a.total) ||
+                        b.have.length - a.have.length ||
+                        a.missing.length - b.missing.length
+                    );
+            }
+
+            function addFridgeItem(name){
+                if (fridgeUsed) return;
+                const input = document.getElementById("fridgeInput");
+                const raw = typeof name === "string" ? name : (input ? input.value : "");
+                raw.split(",").map(part => part.trim()).filter(Boolean).forEach(part => {
+                    const exists = fridgeItems.some(item => item.toLowerCase() === part.toLowerCase());
+                    if (!exists) fridgeItems.push(part);
+                });
+                if (input && typeof name !== "string"){
+                    input.value = "";
+                    input.focus();
+                }
+                renderFridge();
+            }
+
+            function removeFridgeItem(index){
+                if (fridgeUsed) return;
+                fridgeItems.splice(index, 1);
+                renderFridge();
+            }
+
+            function clearFridge(){
+                if (fridgeUsed) return;
+                fridgeItems = [];
+                renderFridge();
+            }
+
+            function viewFridgeResult(index){
+                const food = foods[index];
+                if (!food) return;
+                showDetails(food);
+            }
+            function findFridgeRecipes(){
+                if (fridgeUsed || fridgeItems.length === 0) return;
+                fridgeMatches = computeFridgeMatches();
+                fridgeUsed = true;
+                renderFridge();
+            }
+
+            function renderFridge(){
+                const itemsBox = document.getElementById("fridgeItems");
+                const suggestBox = document.getElementById("fridgeSuggestions");
+                const resultsBox = document.getElementById("fridgeResults");
+                const clearBtn = document.getElementById("fridgeClear");
+                const findBtn = document.getElementById("fridgeFind");
+                const lockCard = document.getElementById("fridgeLock");
+                const usesPill = document.getElementById("fridgeUses");
+                const input = document.getElementById("fridgeInput");
+                const addBtn = document.querySelector(".fridge-add-btn");
+                if (!itemsBox || !suggestBox || !resultsBox) return;
+
+                input.disabled = fridgeUsed;
+                addBtn.disabled = fridgeUsed;
+                findBtn.hidden = fridgeUsed;
+                findBtn.disabled = fridgeItems.length === 0;
+                lockCard.hidden = !fridgeUsed;
+                usesPill.textContent = fridgeUsed ? "Free use used" : "1 free use left";
+                clearBtn.hidden = fridgeUsed || fridgeItems.length === 0;
+
+                const taken = fridgeItems.map(item => item.toLowerCase());
+                suggestBox.previousElementSibling.hidden = fridgeUsed;
+                suggestBox.innerHTML = fridgeUsed ? "" : FRIDGE_SUGGESTIONS
+                    .filter(item => !taken.includes(item.toLowerCase()))
+                    .slice(0, 8)
+                    .map(item => `<button type="button" class="tag tag-btn" onclick="addFridgeItem('${item}')">+ ${item}</button>`)
+                    .join("");
+
+                itemsBox.innerHTML = fridgeItems.length === 0
+                    ? `<p class="fridge-note">Nothing added yet.</p>`
+                    : fridgeItems.map((item, index) => `
+                        <span class="fridge-chip"${fridgeUsed ? ' style="padding-right:12px"' : ""}>${esc(item)}
+                            ${fridgeUsed ? "" : `<button type="button" aria-label="Remove ${esc(item)}" onclick="removeFridgeItem(${index})"><span class="material-icons">close</span></button>`}
+                        </span>`).join("");
+
+                if (!fridgeUsed){
+                    resultsBox.innerHTML = emptyState("Add your ingredients, then tap Find recipes. You get one free search.");
+                    return;
+                }
+                if (fridgeMatches.length === 0){
+                    resultsBox.innerHTML = emptyState("No recipes matched those ingredients.");
+                    return;
+                }
+
+                resultsBox.innerHTML = fridgeMatches.map(({ food, have, missing, total }) => {
+                    const percent = Math.round((have.length / total) * 100);
+                    const ready = missing.length === 0;
+                    const shown = missing.slice(0, 3).map(prettyIngredient).join(", ");
+                    const more = missing.length > 3 ? ` +${missing.length - 3} more` : "";
+                    return `
+                    <button type="button" class="saved-card fridge-result" onclick="viewFridgeResult(${foods.indexOf(food)})">
+                        <img src="${food.image}" class="saved-thumb" alt="">
+                        <div class="saved-info">
+                            <h4 class="saved-name">${food.name}</h4>
+                            <div class="match-meta">
+                                <span>${have.length} of ${total} ingredients</span>
+                                ${ready ? `<span class="match-ready">Ready to cook</span>` : ""}
+                            </div>
+                            <div class="match-bar"><div class="match-fill" style="width:${percent}%"></div></div>
+                            ${ready ? "" : `<span class="match-missing">Need: ${esc(shown)}${more}</span>`}
+                        </div>
+                    </button>`;
+                }).join("");
             }
 
             /*============
@@ -529,7 +716,7 @@
             /*=================
                     MAIN
             ===================*/
-            const NAV_SCREENS = ["homepage", "search-page", "recipes", "subscription", "credits"];
+            const NAV_SCREENS = ["homepage", "search-page", "recipes", "subscription", "myfridge"];
             let currentScreen = "welcome";
             let detailReturnScreen = "homepage";
 
@@ -590,3 +777,4 @@
             applyDietFilter();
             loadFood();
             renderSavedRecipes();
+            renderFridge();
