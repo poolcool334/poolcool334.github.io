@@ -1,10 +1,3 @@
-/* =========================================================
-   BITEWISE
-   Palette comes from the mascot: cherry apple, olive broccoli,
-   butter background. One bold thing: the swipe card. Everything
-   else stays flat and quiet so it can stand out.
-   ========================================================= */
-
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
@@ -234,10 +227,7 @@ img { display: block; max-width: 100%; }
     font-size: 0.75rem;
     font-weight: 500;
 }
-
-/* =========================================================
-   WELCOME
-   ========================================================= */
+/* ---------- WELCOME ---------- */
 #welcome {
     padding: 0;
     color: var(--oat);
@@ -277,9 +267,7 @@ img { display: block; max-width: 100%; }
 }
 .welcome-copy .prim-button { margin-top: 10px; }
 
-/* =========================================================
-   ONBOARDING
-   ========================================================= */
+/* ---------- ONBOARDING ---------- */
 #guest-form { padding-bottom: 32px; }
 
 .form-head { margin: 22px 0 22px; }
@@ -330,9 +318,7 @@ select.control {
 }
 #form .prim-button { margin-top: 26px; }
 
-/* =========================================================
-   HOME + SWIPE CARD
-   ========================================================= */
+/* ---------- HOME AND SWIPECARDS ---------- */
 .topbar {
     display: flex;
     align-items: center;
@@ -351,7 +337,6 @@ select.control {
     height: 25rem;
     margin-top: 14px;
 }
-/* two cards peeking out behind the top one */
 .food-area::before,
 .food-area::after {
     content: "";
@@ -434,7 +419,6 @@ select.control {
 }
 .food-info .secondary-btn { width: 100%; }
 
-/* YUM / PASS stamps that fade in while dragging */
 .stamp {
     position: absolute;
     top: 18px;
@@ -452,7 +436,6 @@ select.control {
 .stamp-yum  { left: 16px;  color: var(--olive);  transform: rotate(-12deg); }
 .stamp-pass { right: 16px; color: var(--cherry); transform: rotate(12deg); }
 
-/* round action buttons */
 .bw-actions {
     display: flex;
     justify-content: center;
@@ -476,9 +459,7 @@ select.control {
 .bw-action-btn:hover { transform: translateY(-2px); }
 .bw-action-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 currentColor; }
 
-/* =========================================================
-   NAV
-   ========================================================= */
+/* ---------- NAV ---------- */
 .nav {
     position: absolute;
     left: 12px;
@@ -521,9 +502,7 @@ select.control {
 }
 .nav-item:focus-visible { outline-color: var(--butter); outline-offset: -3px; }
 
-/* =========================================================
-   LISTS (search + matches)
-   ========================================================= */
+/* ---------- SEARCHES N MATCHES ---------- */
 .search-bar {
     display: flex;
     align-items: center;
@@ -611,9 +590,7 @@ select.control {
     border: 2px solid var(--line);
 }
 
-/* =========================================================
-   RECIPE DETAILS
-   ========================================================= */
+/* ---------- RECIPE DETAILS ---------- */
 #details { padding: 0 20px 36px; }
 
 .detail-hero {
@@ -676,7 +653,6 @@ select.control {
     color: var(--muted);
 }
 
-/* ingredients are tick-off checkboxes */
 .ingredient {
     display: flex;
     align-items: center;
@@ -712,7 +688,6 @@ select.control {
     text-decoration: line-through;
 }
 
-/* steps are a real sequence, so they get numbers */
 .step {
     position: relative;
     display: flex;
@@ -746,56 +721,159 @@ select.control {
     line-height: 1.5;
 }
 
-/* =========================================================
-   TEAM
-   ========================================================= */
-.team-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 0 0 22px;
+/* ---------- MYFRIDGE ---------- */
+.fridge-add { padding-right: 0.45rem; }
+.fridge-add-btn {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     padding: 0;
-    list-style: none;
+    color: var(--oat);
+    background: var(--olive);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
-.member {
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
-    background: var(--paper);
-    border: 1.5px solid var(--line);
-    border-radius: 18px;
-}
-.member-name { font-size: 1.05rem; font-weight: 600; }
-.member-role { font-size: 0.85rem; color: var(--muted); }
+.fridge-add-btn:hover { background: var(--cherry-bright); }
+.fridge-add-btn .material-icons { color: inherit; font-size: 22px; }
 
-.event {
+.fridge-label {
+    margin: 14px 0 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+.tag-btn {
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+.tag-btn:hover { border-color: var(--olive); background: var(--butter); }
+
+.fridge-head {
     display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 26px 0 10px;
+}
+.fridge-head .section-title { margin: 0; }
+.text-btn {
+    padding: 4px 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--cherry);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.text-btn[hidden] { display: none; }
+.fridge-note { font-size: 0.85rem; color: var(--muted); }
+
+.fridge-chip {
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
+    gap: 2px;
+    padding: 4px 4px 4px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--cherry);
+    background: var(--butter);
+    border: 1.5px solid var(--mocha);
+    border-radius: var(--r-pill);
+}
+.fridge-chip button {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.fridge-chip button:hover { background: rgba(118, 7, 13, 0.12); }
+.fridge-chip .material-icons { font-size: 16px; }
+
+.fridge-uses { margin-top: 10px; }
+
+.fridge-find { margin-top: 22px; }
+.fridge-find[hidden] { display: none; }
+.fridge-find:disabled {
+    background-color: var(--mocha);
+    box-shadow: 0 4px 0 #8a6f52;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.search-bar:has(input:disabled) { opacity: 0.55; }
+.fridge-add-btn:disabled { background: var(--mocha); cursor: not-allowed; }
+
+.fridge-lock {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 12px;
+    margin-top: 22px;
     padding: 16px;
     color: var(--oat);
     background: var(--olive);
     border-radius: var(--r-lg);
 }
-.event img {
-    width: 72px;
-    height: 72px;
-    flex-shrink: 0;
-    border-radius: 18px;
-    border: 2px solid var(--butter);
+.fridge-lock[hidden] { display: none; }
+.fridge-lock > .material-icons {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    color: var(--olive-deep);
+    background: var(--butter);
+    border-radius: 50%;
 }
-.event-label { font-size: 0.8rem; opacity: 0.85; }
-.event h3 {
-    margin: 2px 0;
-    font-size: 1.15rem;
-    line-height: 1.15;
+.fridge-lock h4 { font-size: 1.05rem; line-height: 1.15; color: var(--butter); }
+.fridge-lock p { margin-top: 3px; font-size: 0.85rem; opacity: 0.9; }
+.fridge-lock .secondary-btn {
+    grid-column: 1 / -1;
     color: var(--butter);
+    border-color: var(--butter);
 }
-.event-note { font-size: 0.8rem; opacity: 0.85; }
+.fridge-lock .secondary-btn:hover { background: var(--butter); color: var(--olive-deep); }
 
-/* =========================================================
-   BITEWISE+
-   ========================================================= */
+.fridge-result .saved-info { flex: 1; }
+.match-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+.match-ready { font-weight: 600; color: var(--olive); }
+.match-bar {
+    height: 6px;
+    overflow: hidden;
+    background: var(--oat);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+}
+.match-fill {
+    height: 100%;
+    background: var(--olive);
+    border-radius: inherit;
+    transition: width 0.3s ease;
+}
+.match-missing {
+    font-size: 0.78rem;
+    line-height: 1.3;
+    color: var(--muted);
+}
+
+/* ---------- BITEWISE+ ---------- */
 .plus-card {
     padding: 22px 18px 18px 22px;
     color: var(--oat);
@@ -892,9 +970,7 @@ select.control {
     border-radius: var(--r-pill);
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* ---------- MOBILE ---------- */
 @media (max-width: 480px) {
     html, body { height: 100%; }
     body {
